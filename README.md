@@ -22,6 +22,7 @@
 - إنشاء أسماء فريدة تلقائياً لتجنب تعارض أسماء الملفات
 
 ---
+https://github.com/adeloche2/Php_Files_uploader/blob/main/Screenshot_2026-07-03-22-53-54-845_com.android.chrome-edit.jpg
 
 ## 📁 هيكل المشروع
 
