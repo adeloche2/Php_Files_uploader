@@ -183,6 +183,6 @@ Options -ExecCGI
 
 ## 👨‍💻 المطور
 
-**Adel Oche**
+**Adeloche**
 
 إذا أعجبك المشروع، فلا تنسَ منحه ⭐ على GitHub.
