@@ -4,6 +4,7 @@
 /style.css
 /Screenshot_*.jpg
 /Screenshot_*.png
+/public/*.php
 /storage/uploads/*
 !/storage/uploads/.gitkeep
 /storage/logs/*
