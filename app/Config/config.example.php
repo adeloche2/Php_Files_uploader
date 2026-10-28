@@ -39,5 +39,6 @@ return [
         'debug' => false,
         'timezone' => 'Africa/Algiers',
         'key' => 'CHANGE_THIS_TO_A_RANDOM_SECRET_AT_LEAST_32_CHARACTERS',
+        'allow_public_delete' => false,
     ],
 ];
