@@ -10,6 +10,7 @@ final class ImageRepository {
  }
  public function all(int $limit=100): array { $limit=max(1,min(500,$limit)); return $this->pdo->query('SELECT * FROM images ORDER BY id DESC LIMIT '.$limit)->fetchAll(); }
  public function find(int $id): ?array { $s=$this->pdo->prepare('SELECT * FROM images WHERE id=:id LIMIT 1');$s->execute([':id'=>$id]);$r=$s->fetch();return $r===false?null:$r; }
+ public function findByStoredName(string $name): ?array { $s=$this->pdo->prepare('SELECT * FROM images WHERE stored_name=:name LIMIT 1');$s->execute([':name'=>$name]);$r=$s->fetch();return $r===false?null:$r; }
  public function delete(int $id): bool { $s=$this->pdo->prepare('DELETE FROM images WHERE id=:id');$s->execute([':id'=>$id]);return $s->rowCount()===1; }
  public function stats(): array { $r=$this->pdo->query('SELECT COUNT(*) image_count,COALESCE(SUM(file_size),0) total_bytes FROM images')->fetch();return ['image_count'=>(int)$r['image_count'],'total_bytes'=>(int)$r['total_bytes']]; }
 }
