@@ -32,6 +32,7 @@ $config['storage']['access_key'] = $env('S3_ACCESS_KEY_ID', $config['storage']['
 $config['storage']['secret_key'] = $env('S3_SECRET_ACCESS_KEY', $config['storage']['secret_key'] ?? '');
 $config['app']['key'] = $env('APP_KEY', $config['app']['key'] ?? '');
 $config['app']['timezone'] = $env('APP_TIMEZONE', $config['app']['timezone'] ?? 'UTC');
+$config['app']['allow_public_delete'] = filter_var($env('ENABLE_PUBLIC_DELETE', $config['app']['allow_public_delete'] ?? false), FILTER_VALIDATE_BOOLEAN);
 
 date_default_timezone_set((string)$config['app']['timezone']);
 
