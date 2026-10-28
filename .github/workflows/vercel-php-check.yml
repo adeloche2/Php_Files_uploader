@@ -1,0 +1,36 @@
+name: Vercel PHP validation
+
+on:
+  push:
+    branches: ["codex/image-uploader-refactor"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo_mysql, fileinfo
+          tools: composer:v2
+
+      - name: Validate PHP syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          find api app public -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Validate deployment JSON
+        run: php -r '$files = ["vercel.json", "composer.json"]; foreach ($files as $file) { json_decode(file_get_contents($file), true, 512, JSON_THROW_ON_ERROR); echo "$file is valid JSON\n"; }'
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
