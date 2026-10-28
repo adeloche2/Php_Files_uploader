@@ -9,7 +9,11 @@ $type = 'info';
 
 /* معالجة الحذف؛ المصادقة وتحديد ملكية الصور يجب إضافتهما قبل النشر العام. */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delete') {
-    if (!verifyCsrfToken($_POST['csrf_token'] ?? null)) {
+    if (empty($config['app']['allow_public_delete'])) {
+        http_response_code(403);
+        $message = 'الحذف معطّل افتراضيًا؛ أضف مصادقة إدارية قبل تفعيله.';
+        $type = 'danger';
+    } elseif (!verifyCsrfToken($_POST['csrf_token'] ?? null)) {
         http_response_code(403);
         $message = 'تعذر التحقق من الطلب.';
         $type = 'danger';
@@ -97,10 +101,12 @@ $max = (int)$config['upload']['max_files_per_request'];
           <p class="muted small"><?= e((string)$im['uploaded_at']) ?></p>
           <div class="card-actions">
             <a class="secondary-button" href="/download.php?id=<?= (int)$im['id'] ?>">تنزيل</a>
-            <form method="post" class="delete-form" onsubmit="return confirm('هل تريد حذف الصورة نهائيًا؟')">
-              <input type="hidden" name="action" value="delete"><input type="hidden" name="image_id" value="<?= (int)$im['id'] ?>">
-              <input type="hidden" name="csrf_token" value="<?= e(csrfToken()) ?>"><button class="danger-button" type="submit">حذف</button>
-            </form>
+            <?php if (!empty($config['app']['allow_public_delete'])): ?>
+              <form method="post" class="delete-form" onsubmit="return confirm('هل تريد حذف الصورة نهائيًا؟')">
+                <input type="hidden" name="action" value="delete"><input type="hidden" name="image_id" value="<?= (int)$im['id'] ?>">
+                <input type="hidden" name="csrf_token" value="<?= e(csrfToken()) ?>"><button class="danger-button" type="submit">حذف</button>
+              </form>
+            <?php endif; ?>
           </div>
         </div>
       </article>
