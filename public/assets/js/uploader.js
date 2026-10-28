@@ -115,7 +115,8 @@
           size: ticket.size,
           mime_type: ticket.mime_type,
           extension: ticket.extension,
-          upload_token: ticket.upload_token
+          upload_token: ticket.upload_token,
+          issued_at: ticket.issued_at
         });
       } catch (error) {
         errors.push(file.name + ': ' + (error?.message || 'فشل الرفع.'));
