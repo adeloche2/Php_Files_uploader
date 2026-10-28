@@ -2,6 +2,7 @@
   "name": "adeloche2/php-files-uploader",
   "description": "Arabic RTL PHP image uploader for Vercel with MySQL and S3-compatible object storage",
   "type": "project",
+  "license": "proprietary",
   "require": {
     "php": "^8.1",
     "aws/aws-sdk-php": "^3.300"
