@@ -1,8 +1,8 @@
 /app/Config/config.php
 /.env
 /.vercel/
- /vendor/
- /composer.phar
+/vendor/
+/composer.phar
 /storage/uploads/*
 !/storage/uploads/.gitkeep
 /storage/logs/*
