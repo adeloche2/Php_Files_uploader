@@ -33,15 +33,16 @@ $size = filter_var($input['size'] ?? null, FILTER_VALIDATE_INT);
 $mime = (string)($input['mime_type'] ?? '');
 $extension = (string)($input['extension'] ?? '');
 $signature = (string)($input['upload_token'] ?? '');
+$issuedAt = filter_var($input['issued_at'] ?? null, FILTER_VALIDATE_INT);
 $allowed = $config['upload']['allowed_mime_types'];
 
 if (!preg_match('#^images/[a-f0-9]{48}\.[a-z0-9]{1,8}$#', $key)
     || $size === false || $size < 1 || $size > (int)$config['upload']['max_file_size']
     || !isset($allowed[$mime]) || $allowed[$mime] !== $extension
-    || $signature === '') {
+    || $signature === '' || $issuedAt === false || $issuedAt < time() - 900 || $issuedAt > time() + 60) {
     uploadCompleteResponse(400, ['error' => 'بيانات الصورة غير صالحة.']);
 }
-$expected = hash_hmac('sha256', implode("\n", [$key, $name, (string)$size, $mime]), (string)$config['app']['key']);
+$expected = hash_hmac('sha256', implode("\n", [(string)$issuedAt, $key, $name, (string)$size, $mime]), (string)$config['app']['key']);
 if (!hash_equals($expected, $signature)) {
     uploadCompleteResponse(403, ['error' => 'رمز إكمال الرفع غير صالح.']);
 }
@@ -54,6 +55,14 @@ try {
     if ($actualSize !== (int)$size || $actualSize < 1 || $actualSize > (int)$config['upload']['max_file_size'] || $actualMime !== $mime) {
         $storage->deleteObject($key);
         uploadCompleteResponse(422, ['error' => 'الملف المخزن لا يطابق الحجم أو نوع المحتوى المعلن.']);
+    }
+
+    $existing = $imageRepository->findByStoredName(basename($key));
+    if ($existing !== null) {
+        if ((string)$existing['storage_path'] === $key) {
+            uploadCompleteResponse(200, ['ok' => true, 'already_registered' => true]);
+        }
+        uploadCompleteResponse(409, ['error' => 'مفتاح التخزين مسجل مسبقًا.']);
     }
 
     $imageRepository->create([
@@ -69,7 +78,7 @@ try {
     uploadCompleteResponse(201, ['ok' => true]);
 } catch (PDOException $ex) {
     error_log('Could not register uploaded image: ' . $ex->getMessage());
-    try { if (isset($storage)) { $storage->deleteObject($key); } } catch (Throwable $ignored) {}
+    // لا نحذف الكائن هنا: قد يكون السجل قد أُنشئ بالفعل ثم فشل الرد، وحذفه يكسر الصورة المسجلة.
     uploadCompleteResponse(500, ['error' => 'تم استلام الملف لكن تعذر تسجيل بياناته. أعد المحاولة.']);
 } catch (Throwable $ex) {
     error_log('Upload completion failed: ' . $ex->getMessage());
