@@ -1,21 +1,22 @@
 <?php
 /**
  * تهيئة التطبيق وقراءة الإعدادات من Environment Variables أو ملف config.php محلي.
- * هذا الأسلوب يتجنب الحاجة إلى ملف إعدادات سري ضمن نشر Vercel.
+ * لا يعتمد هذا الملف على جلسات PHP المخزنة على قرص محلي، لأن بيئات serverless قد تكون مؤقتة.
  */
 declare(strict_types=1);
 
 $root = dirname(__DIR__, 2);
 $localConfig = dirname(__DIR__) . '/Config/config.php';
 $exampleConfig = dirname(__DIR__) . '/Config/config.example.php';
-$config = require is_file($localConfig) ? $localConfig : $exampleConfig;
+$configFile = is_file($localConfig) ? $localConfig : $exampleConfig;
+$config = require $configFile;
 
 $env = static function (string $name, mixed $default = null): mixed {
     $value = getenv($name);
     return $value === false || $value === '' ? $default : $value;
 };
 
-/* متغيرات الاتصال بقاعدة البيانات؛ إذا لم توجد تُستخدم القيم من ملف الإعدادات المحلي. */
+/* بيانات الاتصال بقاعدة البيانات. */
 $config['database']['host'] = $env('DB_HOST', $config['database']['host'] ?? '127.0.0.1');
 $config['database']['port'] = (int)$env('DB_PORT', $config['database']['port'] ?? 3306);
 $config['database']['name'] = $env('DB_DATABASE', $config['database']['name'] ?? '');
@@ -23,7 +24,7 @@ $config['database']['username'] = $env('DB_USERNAME', $config['database']['usern
 $config['database']['password'] = $env('DB_PASSWORD', $config['database']['password'] ?? '');
 $config['database']['charset'] = $env('DB_CHARSET', $config['database']['charset'] ?? 'utf8mb4');
 
-/* بيانات اعتماد مخزن S3-compatible؛ لا تضع هذه القيم في الملفات المتعقبة بـ Git. */
+/* بيانات اعتماد مخزن S3-compatible. */
 $config['storage']['endpoint'] = $env('S3_ENDPOINT', $config['storage']['endpoint'] ?? '');
 $config['storage']['region'] = $env('S3_REGION', $config['storage']['region'] ?? 'auto');
 $config['storage']['bucket'] = $env('S3_BUCKET', $config['storage']['bucket'] ?? '');
