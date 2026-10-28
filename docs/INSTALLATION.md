@@ -1,8 +1,12 @@
-# التثبيت
+# التثبيت المحلي
 
-1. استخدم PHP 8.1+ مع pdo_mysql وfileinfo، وMySQL/MariaDB.
-2. أنشئ قاعدة بيانات ومستخدمًا بصلاحيات محدودة، ثم نفّذ database/schema.sql.
-3. انسخ app/Config/config.example.php إلى app/Config/config.php وعدّل بيانات الاتصال.
-4. اضبط Document Root ليشير إلى public/ فقط، مع إبقاء app/ وstorage/ خارجه.
-5. امنح PHP صلاحية الكتابة إلى storage/uploads/ وstorage/logs/ دون أذونات عامة.
-6. راجع docs/CONFIGURATION.md، ثم اختبر الصور الصحيحة والملفات غير الصورية والصور الأكبر من الحد قبل النشر.
+1. استخدم PHP 8.1+ مع pdo_mysql وfileinfo وComposer.
+2. شغّل `composer install` لتثبيت AWS SDK for PHP.
+3. أنشئ قاعدة بيانات ومستخدمًا بصلاحيات محدودة، ثم نفّذ `database/schema.sql`.
+4. انسخ `app/Config/config.example.php` إلى `app/Config/config.php` واضبط بيانات قاعدة البيانات والتخزين.
+5. أنشئ bucket خاصًا في خدمة S3-compatible واضبط endpoint ومفاتيح الوصول.
+6. أنشئ APP_KEY عشوائيًا سريًا لا يقل عن 32 حرفًا.
+7. لتجربة واجهة PHP محليًا، استخدم خادم PHP مع توجيه مناسب؛ ملفات CSS وJavaScript موجودة في `public/assets`.
+
+## النشر على Vercel
+راجع `docs/VERCEL.md`. لا تحتاج إلى نسخ `config.php` إلى Vercel؛ استخدم Environment Variables. نفذ `database/schema.sql` في قاعدة MySQL المُدارة، واضبط CORS في مخزن الصور.
