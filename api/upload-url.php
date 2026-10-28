@@ -50,7 +50,8 @@ if ($name === '') {
 $name = function_exists('mb_substr') ? mb_substr($name, 0, 250, 'UTF-8') : substr($name, 0, 250);
 
 $key = 'images/' . bin2hex(random_bytes(24)) . '.' . $allowed[$mime];
-$signature = hash_hmac('sha256', implode("\n", [$key, $name, (string)$size, $mime]), (string)$config['app']['key']);
+$issuedAt = time();
+$signature = hash_hmac('sha256', implode("\n", [(string)$issuedAt, $key, $name, (string)$size, $mime]), (string)$config['app']['key']);
 
 try {
     $storage = new ObjectStorageService($config['storage']);
@@ -59,6 +60,7 @@ try {
         'upload_url' => $url,
         'key' => $key,
         'upload_token' => $signature,
+        'issued_at' => $issuedAt,
         'name' => $name,
         'size' => (int)$size,
         'mime_type' => $mime,
