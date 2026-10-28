@@ -1,0 +1,11 @@
+# Legacy root-level prototype is not part of the PHP + MySQL application.
+/index.php
+/script.js
+/style.css
+/Screenshot_*.jpg
+/Screenshot_*.png
+/storage/uploads/*
+!/storage/uploads/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+/app/Config/config.php
